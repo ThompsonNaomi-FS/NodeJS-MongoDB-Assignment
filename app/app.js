@@ -26,8 +26,8 @@ app.get('/', (req, res, next) => {
     });
 });
 
-app.use('/developers', developerRoutes);
-app.use('movies', movieRoutes);
+// app.use('/developers', developerRoutes);
+// app.use('movies', movieRoutes);
 
 app.use((req, res, next) => {
     const error = new Error("NOT FOUND!!!");
@@ -43,3 +43,14 @@ app.use((error, req,res, next) => {
         }
     });
 });
+
+mongoose.connect(process.env.mongoDBURL, (err) => {
+    if (err) {
+        console.error("Error: ", err.message);
+    }
+    else {
+        console.log("MongoDB connection established.");
+    }
+});
+
+module.exports = app;
