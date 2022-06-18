@@ -5,3 +5,5 @@ const movieSchema = mongoose.Schema({
     title: String,
     director: String,
 });
+
+module.exports = mongoose.model("Movie", movieSchema);
