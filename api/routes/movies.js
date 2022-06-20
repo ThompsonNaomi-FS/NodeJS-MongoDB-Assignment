@@ -6,19 +6,18 @@ const Movie = require('../models/movie');
 router.get('/', (req, res, next) => {
     Movie.find()
         .then(result => {
-        console.log('Result',result);
-        result.forEach(e => 
+            console.log("Results", result);
         res.json({
             movie: {
-                title: e.title,
-                director: e.director,
-                id: e._id,
+                title: result.title,
+                director: result.director,
+                id: result._id,
             },
             metadata: {
                 host: req.hostname,
                 method: req.method
             }
-        }));
+        }).map();
     })
     .catch(err => {
         res.status(500).json({
@@ -27,7 +26,6 @@ router.get('/', (req, res, next) => {
             }
         })
     });
-
 });
 
 router.post('/', (req, res, next) => {
@@ -66,9 +64,27 @@ router.post('/', (req, res, next) => {
 
 router.get('/:movieID', (req, res, next) => {
     const movieID = req.params.movieID;
-    res.json({
-        message: "Movies - GET BY ID",
-        id: movieID
+    Movie.findOne({
+        _id: movieID
+    }).then(result => {
+        res.status(200).json({
+            movie: {
+                title: result.title,
+                director: result.director,
+                id: result._id
+            },
+            metadata: {
+                host: req.hostname,
+                method: req.method
+            }
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            error: {
+                message: err.message
+            }
+        })
     });
 });
 
