@@ -4,20 +4,21 @@ const router = express.Router();
 const Movie = require('../models/movie');
 
 router.get('/', (req, res, next) => {
+
     Movie.find()
-        .then(result => {
-            console.log("Results", result);
-        res.json({
+    .then(result => {
+        console.log(result.map(movies));
+        res.status(200).json({
             movie: {
                 title: result.title,
                 director: result.director,
-                id: result._id,
+                id: result._id
             },
             metadata: {
                 host: req.hostname,
                 method: req.method
             }
-        }).map();
+        })
     })
     .catch(err => {
         res.status(500).json({
