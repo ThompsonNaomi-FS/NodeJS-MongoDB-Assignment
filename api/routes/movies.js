@@ -102,14 +102,20 @@ router.patch('/:movieID', (req, res, next) => {
     }, {
         $set: updatedMovie
     }).then(result => {
+        console.log(updatedMovie);
         res.status(200).json({
             message: "Movie Updated",
             movie: {
-                title: result.title,
-                director: result.director,
-                id: result._id
+                title: updatedMovie.title,
+                director: updatedMovie.director,
+                id: movieID
             },
             metadata: {
+                acknowledged: result.acknowledged,
+                modifiedCount: result.modifiedCount,
+                upsertedID: result.upsertedID,
+                upsertedCount: result.upsertedCount,
+                matchedCount: result.matchedCount,
                 host: req.hostname,
                 method: req.method
             }
