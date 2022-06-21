@@ -69,6 +69,7 @@ router.get('/:movieID', (req, res, next) => {
         _id: movieID
     }).then(result => {
         res.status(200).json({
+            message: "Movie Found",
             movie: {
                 title: result.title,
                 director: result.director,
