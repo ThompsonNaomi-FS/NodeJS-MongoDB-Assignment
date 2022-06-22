@@ -15,16 +15,6 @@ router.get('/', (req, res, next) => {
                 hostname: req.hostname,
                 method: req.method}
             })
-        //     movie: {
-        //         title: result.title,
-        //         director: result.director,
-        //         id: result._id
-        //     },
-        //     metadata: {
-        //         host: req.hostname,
-        //         method: req.method
-        //     }
-        // })
     })
     .catch(err => {
         res.status(500).json({
