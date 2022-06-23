@@ -1,7 +1,8 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const router = express.Router();
 const Movie = require('../models/movie');
+const { default: mongoose } = require("mongoose");
+
 
 router.get('/', (req, res, next) => {
 
@@ -26,37 +27,59 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-    const newMovie = new Movie({
-        _id: mongoose.Types.ObjectId(),
+    Movie.find({
         title: req.body.title,
-        director: req.body.director,
-    });
-
-    // write to the db
-    newMovie.save()
-        .then(result => {
-            console.log(result);
-            res.status(200).json({
-                message: "Movie Saved",
-                movie: {
-                    title: result.title,
-                    director: result.director,
-                    id: result._id,
-                    metadata: {
-                        method: req.method,
-                        host: req.hostname
-                    }
-                }
-            });
-        })
-        .catch(err => {
-            console.error(err.message);
-            res.status(500).json({
-                error: {
-                    message: err.message
-                }
+        director: req.body.director
+    })
+    .exec()
+    .then(result => {
+        console.log(result);
+        if(result.length > 0) {
+            return res.status(409).json({
+                message: "Movie is already cataloged"
             })
+        }
+        const newMovie = new Movie({
+            _id: mongoose.Types.ObjectId(),
+            title: req.body.title,
+            director: req.body.director,
         });
+    
+        // write to the db
+        newMovie.save()
+            .then(result => {
+                console.log(result);
+                res.status(200).json({
+                    message: "Movie Saved",
+                    movie: {
+                        title: result.title,
+                        director: result.director,
+                        id: result._id,
+                        metadata: {
+                            method: req.method,
+                            host: req.hostname
+                        }
+                    }
+                });
+            })
+            .catch(err => {
+                console.error(err.message);
+                res.status(500).json({
+                    error: {
+                        message: err.message
+                    }
+                })
+            });
+    })
+    .catch(err => {
+        console.error(err.message);
+        res.status(500).json({
+            error: {
+                message: "Unable to save movie with title: " + req.body.title
+            }
+        })
+    })
+
 });
 
 router.get('/:movieID', (req, res, next) => {
@@ -110,8 +133,6 @@ router.patch('/:movieID', (req, res, next) => {
             metadata: {
                 acknowledged: result.acknowledged,
                 modifiedCount: result.modifiedCount,
-                upsertedID: result.upsertedID,
-                upsertedCount: result.upsertedCount,
                 matchedCount: result.matchedCount,
                 host: req.hostname,
                 method: req.method
