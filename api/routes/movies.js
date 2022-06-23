@@ -10,12 +10,12 @@ router.get('/', (req, res, next) => {
     .then(movies => {
         res.status(200).json({
             message: "All Movies",
-            movies: movies
-            , 
+            movies: movies, 
             metadata: {
                 hostname: req.hostname,
-                method: req.method}
-            })
+                method: req.method
+            }
+        })
     })
     .catch(err => {
         res.status(500).json({

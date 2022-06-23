@@ -6,9 +6,26 @@ const Messages = require("../../messages/messages");
 
 
 router.get('/', (req, res, next) => {
-    res.json({
-        message: "Directors - GET"
-    });
+    Director.find()
+    .select("_id name movie")
+    .exec()
+    .then(directors => {
+        res.status(200).json({
+            message: Messages.all,
+            director: directors,
+            metadata: {
+                hostname: req.hostname,
+                method: req.method
+            }
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            error: {
+                message: err.message
+            }
+        })
+    })
 });
 
 router.post('/', (req, res, next) => {
@@ -19,9 +36,9 @@ router.post('/', (req, res, next) => {
     .exec()
     .then(result => {
         console.log(result);
-        if(result.length >0) {
+        if(result.length > 0) {
             return res.status(409).json({
-                message: "Director is already cataloged"
+                message: Messages.already_exists
             })
         }
         const newDirector = new Director({
@@ -95,9 +112,48 @@ router.get('/:directorID', (req, res, next) => {
 router.patch('/:directorID', (req, res, next) => {
     const directorID = req.params.directorID;
 
-    res.json({
-        message: "Directors - PATCH",
-        id: directorID
+    const updatedDirector = {
+        name: req.body.name,
+        movie: req.body.movie
+    };
+
+    Director.updateOne({
+        _id: directorID
+    }, {
+        $set: updatedDirector
+    })
+    .select("name _id")
+    .populate("movie", "title director")
+    .exec()
+    .then(result => {
+        if(!result){
+            console.log(updatedDirector);
+            return res.status(404).json({
+                message: Messages.director_not_found
+            })
+        }
+        res.status(200).json({
+            message: Messages.updated,
+            director: {
+                id: directorID,
+                name: updatedDirector.name,
+                movie: updatedDirector.movie
+            },
+            metadata: {
+                acknowledged: result.acknowledged,
+                modifiedCount: result.modifiedCount,
+                matchedCount: result.matchedCount,
+                host: req.hostname,
+                method: req.method
+            }
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            error: {
+                message: err.message
+            }
+        })
     });
 });
 
