@@ -51,7 +51,7 @@ router.post('/', (req, res, next) => {
         .then(result => {
             console.log(result);
             res.status(200).json({
-                message: "Director Saved",
+                message: Messages.saved,
                 director: {
                     name: result.name,
                     movie: result.movie,
