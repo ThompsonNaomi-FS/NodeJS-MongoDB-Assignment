@@ -8,7 +8,7 @@ const Messages = require("../../messages/messages");
 router.get('/', (req, res, next) => {
     Director.find()
     .select("_id name movie")
-    .populate("Movie", "title director")
+    .populate("movie", "title director")
     .exec()
     .then(directors => {
         res.status(200).json({
