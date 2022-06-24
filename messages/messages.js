@@ -3,5 +3,6 @@ module.exports = {
     all: "All Directors",
     already_exists: "Director is already catalogued",
     saved: "Director Saved",
-    updated: "Director updated successfully"
+    updated: "Director updated successfully",
+    deleted: "Director deleted successfully"
 }

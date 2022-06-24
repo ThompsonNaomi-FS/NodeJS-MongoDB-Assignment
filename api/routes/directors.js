@@ -8,6 +8,7 @@ const Messages = require("../../messages/messages");
 router.get('/', (req, res, next) => {
     Director.find()
     .select("_id name movie")
+    .populate("Movie", "title director")
     .exec()
     .then(directors => {
         res.status(200).json({
@@ -166,7 +167,7 @@ router.delete('/:directorID', (req, res, next) => {
     .exec()
     .then(result => {
         res.status(200).json({
-            message: "Director Deleted",
+            message: Messages.deleted,
             request: {
                 method: "GET",
                 url: "http://localhost:3000/directors/" + directorID
