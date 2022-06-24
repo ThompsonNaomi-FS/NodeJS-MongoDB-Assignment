@@ -98,6 +98,7 @@ router.get('/:directorID', (req, res, next) => {
             })
         }
         res.status(201).json({
+            message: Messages.director_found,
             director: director
         })
     })
